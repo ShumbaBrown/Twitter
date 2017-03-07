@@ -87,6 +87,22 @@ class TwitterClient: BDBOAuth1SessionManager {
             failure(error)
         })
     }
+    
+    func userTimeLine(userID: String, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        get("1.1/statuses/user_timeline.json?user_id=\(userID)&count=200", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            
+            
+            let tweetDictionary = response as! [NSDictionary]
+            
+            let tweets = Tweet.TweetsWithArray(dictionaries: tweetDictionary)
+            
+            success(tweets)
+            
+        }, failure: { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        })
+    }
+    
     /*
     func homeTimeLine(success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
         get("1.1/statuses/home_timeline.json?count=200", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
@@ -154,6 +170,49 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
+    func getProfile(userID: String, success: @escaping (Profile) -> (), failure: @escaping (Error) -> ()) {
+        get("1.1/users/show.json?user_id=\(userID)", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            
+            print(userID)
+            let profileDictionary = response as! NSDictionary
+            let profile = Profile(dictionary: profileDictionary)
+            
+            success(profile)
+            
+        }) { (tast: URLSessionDataTask?, error: Error) in
+            print(error.localizedDescription)
+            
+            failure(error)
+            
+        }
+        
+        
+    }
+    
+    
+    
+    func postTweet(message: String, inReplyToStatusId: String?, success: @escaping (Tweet) -> (Void), failure: @escaping (Error) -> Void) {
+        
+        let parameters: [String: String] = {
+            if let inReplyToStatusId = inReplyToStatusId {
+                return ["status": message, "in_reply_to_status_id": "\(inReplyToStatusId)"]
+            } else {
+                return ["status": message]
+            }
+        }()
+        
+        post("1.1/statuses/update.json",
+             parameters: parameters,
+             progress: nil,
+             success: { _, response in
+                if let dictionary = response as? [String: AnyObject] {
+                    let tweet = Tweet(dictionary: dictionary as NSDictionary)
+                    success(tweet)
+                } },
+             failure: { (_, error: Error) in
+                failure(error)
+        })
+    }
 }
 
 

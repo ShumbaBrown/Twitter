@@ -26,6 +26,8 @@ class TweetCell: UITableViewCell {
     var stringID: String?
     var retweeted: Bool = false
     var favorited: Bool = false
+    var userID: String?
+    var tweet: Tweet?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -38,6 +40,7 @@ class TweetCell: UITableViewCell {
         self.favoriteImageView.isUserInteractionEnabled = true
         let cellTapRecognizerFavorite = UITapGestureRecognizer(target: self, action: #selector(TweetCell.favorite(_:)))
         favoriteImageView.addGestureRecognizer(cellTapRecognizerFavorite)
+        
         
         //let cellTapRecognizerFavorite = UITapGestureRecognizer(target: self, action: #selector(TweetCell.onTapFavorite(_:)))
         //cellTapRecognizerFavorite.cancelsTouchesInView = false
@@ -63,6 +66,7 @@ class TweetCell: UITableViewCell {
         tweetLabel.text = tweet.text
         
         self.stringID = tweet.tweetID
+        self.userID = tweet.userID
         
         if tweet.retweeted == true {
             self.retweeted = true
@@ -165,5 +169,6 @@ class TweetCell: UITableViewCell {
         
         
     }
+    
 
 }

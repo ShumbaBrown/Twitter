@@ -20,6 +20,7 @@ class Tweet: NSObject {
     var favorited: Bool? = false
     var retweeted: Bool? = false
     var tweetID: String?
+    var userID: String?
     
     init(dictionary: NSDictionary) {
         self.text = dictionary["text"] as? String
@@ -43,6 +44,7 @@ class Tweet: NSObject {
             }
             self.screenName = user["name"] as? String
             self.atName = "@\(user["screen_name"]!)"
+            self.userID = user["id_str"] as? String
         }
         
         let fav = dictionary["favorited"] as! Bool
